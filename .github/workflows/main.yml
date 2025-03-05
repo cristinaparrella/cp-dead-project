@@ -1,0 +1,24 @@
+name: Extract Metadata
+
+on:
+  push:
+    paths:
+      - 'objects/*.jpg'  # Runs when new images are added
+
+jobs:
+  extract:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install ExifTool
+        run: sudo apt-get install libimage-exiftool-perl
+
+      - name: Extract metadata
+        run: |
+          mkdir -p metadata
+          exiftool -csv objects/ > metadata/metadata.csv
+          git add metadata/metadata.csv
+          git commit -m "Updated metadata"
+          git push
